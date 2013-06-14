@@ -24,7 +24,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.github.stephenc.javaisotools.iso9660.impl.ISO9660Constants;
+import com.github.stephenc.javaisotools.sabre.DataReference;
 import com.github.stephenc.javaisotools.sabre.HandlerException;
+import com.github.stephenc.javaisotools.sabre.impl.FileDataReference;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -39,7 +41,20 @@ public class ISO9660File implements ISO9660HierarchyObject {
     private boolean enforce8plus3, isMovedDirectory;
     private ISO9660Directory parent;
     private Object id;
-    private final File file;
+    
+    private final boolean isDirectory;
+    private final long lastModified;
+    private final DataReference dataReference;
+    
+    public ISO9660File(DataReference dataReference, String name, long lastModified) throws HandlerException {
+    	this.dataReference = dataReference;
+    	this.lastModified = lastModified;
+    	this.isDirectory = false;
+    	this.isMovedDirectory = false;
+    	setVersion(1);
+    	setName(name);
+        id = new Object();
+    }
 
     /**
      * Create file from File object
@@ -50,7 +65,9 @@ public class ISO9660File implements ISO9660HierarchyObject {
      * @throws HandlerException Invalid File version or file is a directory
      */
     public ISO9660File(File file, int version) throws HandlerException {
-        this.file = file;
+        this.dataReference = new FileDataReference(file);
+        this.lastModified = file.lastModified();
+        this.isDirectory = file.isDirectory();
         setName(file.getName());
         setVersion(version);
         id = new Object();
@@ -71,16 +88,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
      * @throws HandlerException Invalid File version or file is a directory
      */
     public ISO9660File(String pathname, int version) throws HandlerException {
-        this.file = new File(pathname);
-        setName(file.getName());
-        setVersion(version);
-        id = new Object();
-        enforce8plus3 = false;
-        isMovedDirectory = false;
-
-        if (isDirectory()) {
-            throw new HandlerException("Cannot wrap a directory in " + getClass());
-        }
+        this(new File(pathname), version);
     }
 
     /**
@@ -106,7 +114,11 @@ public class ISO9660File implements ISO9660HierarchyObject {
     }
 
     public ISO9660File(ISO9660File file) throws HandlerException {
-        this(file.file);
+        this.dataReference = file.getDataReference();
+        this.lastModified = file.lastModified();
+        this.isDirectory = file.isDirectory();
+        setName(file.getName());
+        setVersion(file.getVersion());
     }
 
     /**
@@ -358,7 +370,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
     }
 
     public boolean isDirectory() {
-        return file.isDirectory();
+        return isDirectory;
     }
 
     public Object clone() {
@@ -373,22 +385,20 @@ public class ISO9660File implements ISO9660HierarchyObject {
     }
 
     public long length() {
-        return file.length();
+        return getDataReference().getLength();
     }
 
     public long lastModified() {
-        return file.lastModified();
-    }
-
-    public File getFile() {
-        return file;
+        return lastModified;
     }
 
     public String getAbsolutePath() {
-        return file.getAbsolutePath();
+    	// TODO: fix???
+    	throw new UnsupportedOperationException();
     }
 
-    public File getAbsoluteFile() {
-        return file.getAbsoluteFile();
-    }
+	public DataReference getDataReference(){
+		return dataReference;
+	}
+
 }

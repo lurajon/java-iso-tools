@@ -30,15 +30,14 @@ import com.github.stephenc.javaisotools.iso9660.ISO9660File;
 import com.github.stephenc.javaisotools.iso9660.LayoutHelper;
 import com.github.stephenc.javaisotools.iso9660.impl.ISO9660Constants;
 import com.github.stephenc.javaisotools.iso9660.impl.ISO9660Element;
+import com.github.stephenc.javaisotools.iso9660.impl.LogicalSectorElement;
 import com.github.stephenc.javaisotools.iso9660.sabre.impl.LSBFWordDataReference;
 import com.github.stephenc.javaisotools.iso9660.volumedescriptors.BootRecord;
 import com.github.stephenc.javaisotools.sabre.Element;
-import com.github.stephenc.javaisotools.sabre.HandlerException;
-import com.github.stephenc.javaisotools.sabre.impl.ChainingStreamHandler;
-import com.github.stephenc.javaisotools.sabre.impl.FileDataReference;
-import com.github.stephenc.javaisotools.iso9660.impl.LogicalSectorElement;
 import com.github.stephenc.javaisotools.sabre.Fixup;
+import com.github.stephenc.javaisotools.sabre.HandlerException;
 import com.github.stephenc.javaisotools.sabre.StreamHandler;
+import com.github.stephenc.javaisotools.sabre.impl.ChainingStreamHandler;
 
 public class ElToritoHandler extends ChainingStreamHandler {
 
@@ -124,8 +123,7 @@ public class ElToritoHandler extends ChainingStreamHandler {
         }
 
         // Write Boot Image
-        FileDataReference fdr = new FileDataReference(config.getBootImage().getFile());
-        data(fdr);
+        data(config.getBootImage().getDataReference());
 
         super.endElement();
     }
@@ -183,7 +181,7 @@ public class ElToritoHandler extends ChainingStreamHandler {
             buffer[i++] = (byte) ((lba >> 16) & 0xFF);
             buffer[i++] = (byte) ((lba >> 24) & 0xFF);
             // Boot file length in bytes, 7.3.1 format
-            int len = (int) config.getBootImage().getAbsoluteFile().length();
+            int len = (int) config.getBootImage().length();
             buffer[i++] = (byte) (len & 0xFF);
             buffer[i++] = (byte) ((len >> 8) & 0xFF);
             buffer[i++] = (byte) ((len >> 16) & 0xFF);
