@@ -45,14 +45,16 @@ public class ISO9660File implements ISO9660HierarchyObject {
     private final boolean isDirectory;
     private final long lastModified;
     private final DataReference dataReference;
+    private final String absolutePath;
     
     public ISO9660File(DataReference dataReference, String name, long lastModified) throws HandlerException {
-    	this.dataReference = dataReference;
-    	this.lastModified = lastModified;
-    	this.isDirectory = false;
-    	this.isMovedDirectory = false;
-    	setVersion(1);
-    	setName(name);
+        this.dataReference = dataReference;
+        this.lastModified = lastModified;
+        this.isDirectory = false;
+        this.isMovedDirectory = false;
+        this.absolutePath = null;
+        setVersion(1);
+        setName(name);
         id = new Object();
     }
 
@@ -68,6 +70,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
         this.dataReference = new FileDataReference(file);
         this.lastModified = file.lastModified();
         this.isDirectory = file.isDirectory();
+        this.absolutePath = file.getAbsolutePath();
         setName(file.getName());
         setVersion(version);
         id = new Object();
@@ -117,6 +120,7 @@ public class ISO9660File implements ISO9660HierarchyObject {
         this.dataReference = file.getDataReference();
         this.lastModified = file.lastModified();
         this.isDirectory = file.isDirectory();
+        this.absolutePath = file.getAbsolutePath();
         setName(file.getName());
         setVersion(file.getVersion());
     }
@@ -392,13 +396,19 @@ public class ISO9660File implements ISO9660HierarchyObject {
         return lastModified;
     }
 
+    /**
+     * Return the {@link File#getAbsolutePath()} for the underlying {@link File}
+     * or null if this {@link ISO9660File} is not constructed from a
+     * {@link File}
+     * 
+     * @return
+     */
     public String getAbsolutePath() {
-    	// TODO: fix???
-    	throw new UnsupportedOperationException();
+        return absolutePath;
     }
 
-	public DataReference getDataReference(){
-		return dataReference;
-	}
+    public DataReference getDataReference() {
+        return dataReference;
+    }
 
 }
