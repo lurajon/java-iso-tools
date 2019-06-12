@@ -20,14 +20,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>java-iso-tools-parent</artifactId>
-        <groupId>ecc.java-iso-tools</groupId>
+        <groupId>com.github.stephenc.java-iso-tools</groupId>
         <version>2.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>loop-fs-api</artifactId>
+    <artifactId>loop-fs-spi</artifactId>
 
-    <name>Loop-back File System API</name>
+    <name>Loop-back File System SPI</name>
+
     <developers>
         <developer>
             <id>jdidion</id>
@@ -40,5 +41,12 @@
         </developer>
     </developers>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.stephenc.java-iso-tools</groupId>
+            <artifactId>loop-fs-api</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>
