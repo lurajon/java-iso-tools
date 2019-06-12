@@ -45,10 +45,39 @@
     </modules>
 
     <scm>
-        <connection>scm:git:git://github.com/stephenc/java-iso-tools.git</connection>
-        <developerConnection>scm:git:git@github.com:stephenc/java-iso-tools.git</developerConnection>
-        <url>http://github.com/stephenc/java-iso-tools/tree/master/</url>
+        <connection>scm:git:https://github.com/lurajon/java-iso-tools.git</connection>
+        <developerConnection>scm:git:https://github.com/lurajon/java-iso-tools.git</developerConnection>
+        <url>https://github.com/lurajon/java-iso-tools.git</url>
     </scm>
+    
+    <profiles>
+   <profile>
+      <id>releases</id>
+      <build>
+         <plugins>
+            <plugin>
+               <groupId>org.sonatype.plugins</groupId>
+               <artifactId>nexus-staging-maven-plugin</artifactId>
+               <version>1.6.8</version>
+               <executions>
+                  <execution>
+                     <id>default-deploy</id>
+                     <phase>deploy</phase>
+                     <goals>
+                        <goal>deploy</goal>
+                     </goals>
+                  </execution>
+               </executions>
+               <configuration>
+                  <serverId>nexus-releases</serverId>
+                  <nexusUrl>https://nexus.jx.ci.ecc.no/repository/ecc-releases/</nexusUrl>
+                  <skipStaging>true</skipStaging>
+               </configuration>
+            </plugin>
+         </plugins>
+      </build>
+   </profile>
+</profiles>
 
     <licenses>
         <license>
@@ -121,6 +150,16 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.6</version>
                 </plugin>
+                <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-release-plugin</artifactId>
+		<version>2.5.3</version>
+		<configuration>
+			<tagNameFormat>v@{project.version}</tagNameFormat>
+			<autoVersionSubmodules>true</autoVersionSubmodules>
+			<releaseProfiles>releases</releaseProfiles>
+		</configuration>
+	</plugin>
             </plugins>
         </pluginManagement>
     </build>
